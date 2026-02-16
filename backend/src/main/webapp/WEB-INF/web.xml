@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+         version="4.0">
+    <display-name>Ocean View Resort</display-name>
+
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+    </welcome-file-list>
+
+    <filter>
+        <filter-name>CorsFilter</filter-name>
+        <filter-class>com.oceanview.resort.controller.CorsFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>CorsFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>AuthFilter</filter-name>
+        <filter-class>com.oceanview.resort.security.AuthFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>AuthFilter</filter-name>
+        <url-pattern>/api/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
+
+    <servlet>
+        <servlet-name>LoginServlet</servlet-name>
+        <servlet-class>com.oceanview.resort.controller.LoginServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LoginServlet</servlet-name>
+        <url-pattern>/api/auth/login</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>LogoutServlet</servlet-name>
+        <servlet-class>com.oceanview.resort.controller.LogoutServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LogoutServlet</servlet-name>
+        <url-pattern>/api/auth/logout</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>MeServlet</servlet-name>
+        <servlet-class>com.oceanview.resort.controller.MeServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>MeServlet</servlet-name>
+        <url-pattern>/api/auth/me</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>UsersServlet</servlet-name>
+        <servlet-class>com.oceanview.resort.controller.UsersServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UsersServlet</servlet-name>
+        <url-pattern>/api/users</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>RoomsServlet</servlet-name>
+        <servlet-class>com.oceanview.resort.controller.RoomsServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RoomsServlet</servlet-name>
+        <url-pattern>/api/rooms</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>RoomCategoriesServlet</servlet-name>
+        <servlet-class>com.oceanview.resort.controller.RoomCategoriesServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RoomCategoriesServlet</servlet-name>
+        <url-pattern>/api/room-categories</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ReservationsServlet</servlet-name>
+        <servlet-class>com.oceanview.resort.controller.ReservationsServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ReservationsServlet</servlet-name>
+        <url-pattern>/api/reservations</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ReportsServlet</servlet-name>
+        <servlet-class>com.oceanview.resort.controller.ReportsServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ReportsServlet</servlet-name>
+        <url-pattern>/api/reports</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>RegisterServlet</servlet-name>
+        <servlet-class>com.oceanview.resort.controller.RegisterServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RegisterServlet</servlet-name>
+        <url-pattern>/api/auth/register</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>GuestsServlet</servlet-name>
+        <servlet-class>com.oceanview.resort.controller.GuestsServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>GuestsServlet</servlet-name>
+        <url-pattern>/api/guests/me</url-pattern>
+    </servlet-mapping>
+
+    <session-config>
+        <session-timeout>30</session-timeout>
+        <cookie-config>
+            <path>/</path>
+            <http-only>true</http-only>
+        </cookie-config>
+    </session-config>
+</web-app>
