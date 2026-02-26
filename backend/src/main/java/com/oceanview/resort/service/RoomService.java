@@ -31,7 +31,8 @@ public class RoomService {
     }
 
     public List<RoomDTO> findAvailable(Integer branchId, LocalDate checkIn, LocalDate checkOut) {
-        return roomRepository.findAvailableByBranchAndDates(branchId, checkIn, checkOut).stream().map(RoomMapper::toDTO).collect(Collectors.toList());
+        return roomRepository.findAvailableByBranchAndDates(branchId, checkIn, checkOut).stream().map(RoomMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     public List<RoomCategory> findAllCategories() {
@@ -40,20 +41,27 @@ public class RoomService {
 
     public Optional<Room> create(String roomNumber, int floor, Integer categoryId, Integer branchId) {
         RoomCategory cat = categoryRepository.findById(categoryId).orElse(null);
-        if (cat == null) return Optional.empty();
+        if (cat == null)
+            return Optional.empty();
         Room room = roomFactory.createRoom(roomNumber, floor, cat, branchId);
         return roomRepository.save(room) ? Optional.of(room) : Optional.empty();
     }
 
     public boolean updateStatus(Integer roomId, String newStatus) {
         Room room = roomRepository.findById(roomId).orElse(null);
-        if (room == null) return false;
-        if (!RoomStatusTransition.canTransition(room.getStatus(), newStatus)) return false;
+        if (room == null)
+            return false;
+        if (!RoomStatusTransition.canTransition(room.getStatus(), newStatus))
+            return false;
         room.setStatus(newStatus);
         return roomRepository.update(room);
     }
 
     public boolean update(Room room) {
         return roomRepository.update(room);
+    }
+
+    public boolean delete(Integer id) {
+        return roomRepository.delete(id);
     }
 }

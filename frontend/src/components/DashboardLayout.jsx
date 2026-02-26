@@ -1,17 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
-  Box,
-  Drawer,
-  AppBar,
-  Toolbar,
-  Typography,
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  IconButton,
-  Button,
+  Box, Drawer, AppBar, Toolbar, Typography, List, ListItemButton,
+  ListItemIcon, ListItemText, IconButton, Button, Badge, Tooltip,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import DashboardIcon from '@mui/icons-material/Dashboard';
@@ -23,7 +14,13 @@ import PeopleIcon from '@mui/icons-material/People';
 import LoginIcon from '@mui/icons-material/Login';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import LogoutIcon from '@mui/icons-material/Logout';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import BuildIcon from '@mui/icons-material/Build';
+import RoomServiceIcon from '@mui/icons-material/RoomService';
+import FeedbackIcon from '@mui/icons-material/Feedback';
+import BedroomParentIcon from '@mui/icons-material/BedroomParent';
 import { useAuth } from '../context/AuthContext';
+import { getUnreadCount } from '../api';
 
 const DRAWER_WIDTH = 260;
 
@@ -32,6 +29,15 @@ export function DashboardLayout({ children }) {
   const { user, logout, isManager, isReceptionist, isCustomer } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    if (!user || isCustomer) return;
+    const fetchCount = () => getUnreadCount().then(setUnreadCount).catch(() => { });
+    fetchCount();
+    const interval = setInterval(fetchCount, 30000);
+    return () => clearInterval(interval);
+  }, [user, isCustomer]);
 
   const handleLogout = async () => {
     await logout();
@@ -43,12 +49,17 @@ export function DashboardLayout({ children }) {
     if (isCustomer) {
       navItems.push({ to: '/dashboard', label: 'Dashboard', icon: <DashboardIcon /> });
       navItems.push({ to: '/booking', label: 'Book a Room', icon: <MeetingRoomIcon /> });
+      navItems.push({ to: '/maintenance', label: 'Maintenance', icon: <BuildIcon /> });
+      navItems.push({ to: '/service-requests', label: 'Service Requests', icon: <RoomServiceIcon /> });
+      navItems.push({ to: '/feedback', label: 'Feedback', icon: <FeedbackIcon /> });
     }
     if (isReceptionist || isManager) {
       navItems.push({ to: '/reception', label: 'Reception', icon: <BookOnlineIcon /> });
       navItems.push({ to: '/reservations', label: 'Reservations', icon: <ReceiptLongIcon /> });
+      navItems.push({ to: '/notifications', label: 'Notifications', icon: <NotificationsIcon /> });
     }
     if (isManager) {
+      navItems.push({ to: '/rooms', label: 'Rooms', icon: <BedroomParentIcon /> });
       navItems.push({ to: '/reports', label: 'Reports', icon: <BarChartIcon /> });
       navItems.push({ to: '/staff', label: 'Staff', icon: <PeopleIcon /> });
     }
@@ -67,6 +78,15 @@ export function DashboardLayout({ children }) {
           <Typography variant="h6" component={Link} to="/" sx={{ flexGrow: 1, textDecoration: 'none', color: 'inherit' }}>
             Ocean View Resort
           </Typography>
+          {user && !isCustomer && (
+            <Tooltip title="Notifications">
+              <IconButton color="inherit" component={Link} to="/notifications" sx={{ mr: 1 }}>
+                <Badge badgeContent={unreadCount} color="error">
+                  <NotificationsIcon />
+                </Badge>
+              </IconButton>
+            </Tooltip>
+          )}
           {user && (
             <>
               <Typography variant="body2" sx={{ mr: 2 }}>{user.firstName} ({user.roleCode})</Typography>

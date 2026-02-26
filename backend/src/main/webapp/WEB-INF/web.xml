@@ -118,6 +118,42 @@
         <url-pattern>/api/guests/me</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>MaintenanceServlet</servlet-name>
+        <servlet-class>com.oceanview.resort.controller.MaintenanceServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>MaintenanceServlet</servlet-name>
+        <url-pattern>/api/maintenance</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>FeedbackServlet</servlet-name>
+        <servlet-class>com.oceanview.resort.controller.FeedbackServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FeedbackServlet</servlet-name>
+        <url-pattern>/api/feedback</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ServiceRequestServlet</servlet-name>
+        <servlet-class>com.oceanview.resort.controller.ServiceRequestServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ServiceRequestServlet</servlet-name>
+        <url-pattern>/api/service-requests</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>NotificationServlet</servlet-name>
+        <servlet-class>com.oceanview.resort.controller.NotificationServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>NotificationServlet</servlet-name>
+        <url-pattern>/api/notifications</url-pattern>
+    </servlet-mapping>
+
     <session-config>
         <session-timeout>30</session-timeout>
         <cookie-config>

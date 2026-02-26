@@ -1,8 +1,6 @@
 -- Ocean View Resort - PostgreSQL Schema
 -- Galle Beachside Hotel Management System
 
--- Extensions (optional, for UUID if desired)
--- CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- ==================== ROLES & USERS ====================
 CREATE TABLE roles (
@@ -453,6 +451,22 @@ CREATE TABLE feedback (
 
 CREATE INDEX idx_feedback_guest ON feedback(guest_id);
 CREATE INDEX idx_feedback_rating ON feedback(rating);
+
+-- ==================== SERVICE REQUESTS ====================
+CREATE TABLE service_requests (
+    id              SERIAL PRIMARY KEY,
+    reservation_id  INTEGER REFERENCES reservations(id),
+    guest_id        INTEGER REFERENCES guests(id),
+    request_type    VARCHAR(50) NOT NULL,
+    description     TEXT,
+    status          VARCHAR(50) DEFAULT 'PENDING',
+    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_service_requests_guest ON service_requests(guest_id);
+CREATE INDEX idx_service_requests_reservation ON service_requests(reservation_id);
+CREATE INDEX idx_service_requests_status ON service_requests(status);
 
 -- ==================== SESSIONS (optional server-side session store) ====================
 CREATE TABLE user_sessions (

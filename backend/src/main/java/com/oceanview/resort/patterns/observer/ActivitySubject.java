@@ -3,9 +3,8 @@ package com.oceanview.resort.patterns.observer;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Subject for activity observers (Observer pattern).
- */
+//Subject for activity observers (Observer pattern).
+
 public class ActivitySubject {
     private final List<ActivityObserver> observers = new ArrayList<>();
 

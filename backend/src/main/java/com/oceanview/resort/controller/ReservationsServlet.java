@@ -26,8 +26,10 @@ public class ReservationsServlet extends HttpServlet {
         String pending = req.getParameter("pending");
         if (idParam != null) {
             Optional<ReservationDTO> opt = reservationService.findById(Integer.parseInt(idParam));
-            if (opt.isEmpty()) resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            else resp.getWriter().write(JsonHelper.toJson(ApiResponse.ok(opt.get())));
+            if (opt.isEmpty())
+                resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            else
+                resp.getWriter().write(JsonHelper.toJson(ApiResponse.ok(opt.get())));
             return;
         }
         if ("true".equals(pending)) {
@@ -49,7 +51,8 @@ public class ReservationsServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("application/json");
         Reservation body = JsonHelper.fromJson(req.getReader().lines().reduce("", (a, b) -> a + b), Reservation.class);
-        if (body == null || body.getGuestId() == null || body.getCheckInDate() == null || body.getCheckOutDate() == null) {
+        if (body == null || body.getGuestId() == null || body.getCheckInDate() == null
+                || body.getCheckOutDate() == null) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             resp.getWriter().write(JsonHelper.toJson(ApiResponse.fail("Guest, check-in and check-out required")));
             return;
@@ -62,7 +65,8 @@ public class ReservationsServlet extends HttpServlet {
             resp.getWriter().write(JsonHelper.toJson(ApiResponse.fail("Validation failed or room not available")));
             return;
         }
-        resp.getWriter().write(JsonHelper.toJson(ApiResponse.ok(com.oceanview.resort.mapper.ReservationMapper.toDTO(created.get()))));
+        resp.getWriter().write(
+                JsonHelper.toJson(ApiResponse.ok(com.oceanview.resort.mapper.ReservationMapper.toDTO(created.get()))));
     }
 
     @Override
@@ -88,7 +92,32 @@ public class ReservationsServlet extends HttpServlet {
             resp.getWriter().write(JsonHelper.toJson(ok ? ApiResponse.ok(null) : ApiResponse.fail("Cannot cancel")));
             return;
         }
+        if ("update".equals(action)) {
+            Reservation body = JsonHelper.fromJson(req.getReader().lines().reduce("", (a, b) -> a + b),
+                    Reservation.class);
+            if (body == null) {
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                resp.getWriter().write(JsonHelper.toJson(ApiResponse.fail("Request body required")));
+                return;
+            }
+            boolean ok = reservationService.update(id, body);
+            resp.getWriter().write(JsonHelper.toJson(ok ? ApiResponse.ok(null) : ApiResponse.fail("Update failed")));
+            return;
+        }
         resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        resp.getWriter().write(JsonHelper.toJson(ApiResponse.fail("action=approve|cancel")));
+        resp.getWriter().write(JsonHelper.toJson(ApiResponse.fail("action=approve|cancel|update")));
+    }
+
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        resp.setContentType("application/json");
+        String idParam = req.getParameter("id");
+        if (idParam == null) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.getWriter().write(JsonHelper.toJson(ApiResponse.fail("id required")));
+            return;
+        }
+        boolean ok = reservationService.delete(Integer.parseInt(idParam));
+        resp.getWriter().write(JsonHelper.toJson(ok ? ApiResponse.ok(null) : ApiResponse.fail("Delete failed")));
     }
 }

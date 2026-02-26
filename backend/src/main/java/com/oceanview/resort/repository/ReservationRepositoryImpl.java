@@ -18,7 +18,8 @@ public class ReservationRepositoryImpl implements ReservationRepository {
         try (Connection conn = ds.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) return Optional.of(mapRow(rs));
+                if (rs.next())
+                    return Optional.of(mapRow(rs));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -33,7 +34,8 @@ public class ReservationRepositoryImpl implements ReservationRepository {
         try (Connection conn = ds.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, guestId);
             try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) list.add(mapRow(rs));
+                while (rs.next())
+                    list.add(mapRow(rs));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -48,7 +50,8 @@ public class ReservationRepositoryImpl implements ReservationRepository {
         try (Connection conn = ds.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, branchId);
             try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) list.add(mapRow(rs));
+                while (rs.next())
+                    list.add(mapRow(rs));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -65,7 +68,8 @@ public class ReservationRepositoryImpl implements ReservationRepository {
             ps.setDate(2, Date.valueOf(checkOut));
             ps.setDate(3, Date.valueOf(checkIn));
             try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) list.add(mapRow(rs));
+                while (rs.next())
+                    list.add(mapRow(rs));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -80,7 +84,8 @@ public class ReservationRepositoryImpl implements ReservationRepository {
         try (Connection conn = ds.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, status);
             try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) list.add(mapRow(rs));
+                while (rs.next())
+                    list.add(mapRow(rs));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -91,7 +96,8 @@ public class ReservationRepositoryImpl implements ReservationRepository {
     @Override
     public boolean save(Reservation r) {
         String sql = "INSERT INTO reservations (branch_id, guest_id, room_id, status, check_in_date, check_out_date, adults, children, special_requests, deposit_amount, created_by) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
-        try (Connection conn = ds.getConnection(); PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection conn = ds.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, r.getBranchId());
             ps.setInt(2, r.getGuestId());
             ps.setObject(3, r.getRoomId());
@@ -131,6 +137,17 @@ public class ReservationRepositoryImpl implements ReservationRepository {
             ps.setTimestamp(11, r.getCancelledAt() != null ? Timestamp.from(r.getCancelledAt()) : null);
             ps.setString(12, r.getCancelReason());
             ps.setInt(13, r.getId());
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public boolean delete(Integer id) {
+        String sql = "DELETE FROM reservations WHERE id = ?";
+        try (Connection conn = ds.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new RuntimeException(e);

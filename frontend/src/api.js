@@ -50,6 +50,7 @@ async function parseJsonResponse(res) {
   return res.json();
 }
 
+// ==================== ROOM CATEGORIES ====================
 export async function getRoomCategories() {
   const res = await fetch(`${API_BASE}/room-categories`, getOptions('GET'));
   const data = await parseJsonResponse(res);
@@ -57,6 +58,7 @@ export async function getRoomCategories() {
   return data.data;
 }
 
+// ==================== ROOMS ====================
 export async function getRooms(branchId = 1, available = false, checkIn, checkOut) {
   let url = `${API_BASE}/rooms?branchId=${branchId}`;
   if (available) {
@@ -68,6 +70,28 @@ export async function getRooms(branchId = 1, available = false, checkIn, checkOu
   return data.data;
 }
 
+export async function createRoom(room) {
+  const res = await fetch(`${API_BASE}/rooms`, getOptions('POST', room));
+  const data = await parseJsonResponse(res);
+  if (!data.success) throw new Error(data.message || 'Create failed');
+  return data.data;
+}
+
+export async function updateRoom(id, room) {
+  const res = await fetch(`${API_BASE}/rooms?id=${id}`, getOptions('PUT', room));
+  const data = await parseJsonResponse(res);
+  if (!data.success) throw new Error(data.message || 'Update failed');
+  return data;
+}
+
+export async function deleteRoom(id) {
+  const res = await fetch(`${API_BASE}/rooms?id=${id}`, getOptions('DELETE'));
+  const data = await parseJsonResponse(res);
+  if (!data.success) throw new Error(data.message || 'Delete failed');
+  return data;
+}
+
+// ==================== GUESTS ====================
 export async function getGuestMe() {
   const res = await fetch(`${API_BASE}/guests/me`, getOptions('GET'));
   const data = await res.json();
@@ -75,6 +99,7 @@ export async function getGuestMe() {
   return data.data;
 }
 
+// ==================== RESERVATIONS ====================
 export async function getReservations(opts = {}) {
   const params = new URLSearchParams(opts);
   const res = await fetch(`${API_BASE}/reservations?${params}`, getOptions('GET'));
@@ -104,6 +129,21 @@ export async function cancelReservation(id, reason) {
   return data;
 }
 
+export async function updateReservation(id, reservation) {
+  const res = await fetch(`${API_BASE}/reservations?id=${id}&action=update`, getOptions('PUT', reservation));
+  const data = await parseJsonResponse(res);
+  if (!data.success) throw new Error(data.message || 'Update failed');
+  return data;
+}
+
+export async function deleteReservation(id) {
+  const res = await fetch(`${API_BASE}/reservations?id=${id}`, getOptions('DELETE'));
+  const data = await parseJsonResponse(res);
+  if (!data.success) throw new Error(data.message || 'Delete failed');
+  return data;
+}
+
+// ==================== USERS ====================
 export async function getUsers(role) {
   const url = role ? `${API_BASE}/users?role=${role}` : `${API_BASE}/users`;
   const res = await fetch(url, getOptions('GET'));
@@ -120,16 +160,6 @@ export async function createUser(user, password) {
   return data.data;
 }
 
-export async function getReports(type, from, to) {
-  const params = new URLSearchParams({ type });
-  if (from) params.set('from', from);
-  if (to) params.set('to', to);
-  const res = await fetch(`${API_BASE}/reports?${params}`, getOptions('GET'));
-  const data = await parseJsonResponse(res);
-  if (!data.success) throw new Error(data.message || 'Failed to load report');
-  return data.data;
-}
-
 export async function updateUser(id, user) {
   const res = await fetch(`${API_BASE}/users?id=${id}`, getOptions('PUT', user));
   const data = await parseJsonResponse(res);
@@ -142,4 +172,99 @@ export async function deleteUser(id) {
   const data = await parseJsonResponse(res);
   if (!data.success) throw new Error(data.message || 'Delete failed');
   return data;
+}
+
+// ==================== REPORTS ====================
+export async function getReports(type, from, to) {
+  const params = new URLSearchParams({ type });
+  if (from) params.set('from', from);
+  if (to) params.set('to', to);
+  const res = await fetch(`${API_BASE}/reports?${params}`, getOptions('GET'));
+  const data = await parseJsonResponse(res);
+  if (!data.success) throw new Error(data.message || 'Failed to load report');
+  return data.data;
+}
+
+// ==================== MAINTENANCE REQUESTS ====================
+export async function getMaintenanceRequests(opts = {}) {
+  const params = new URLSearchParams(opts);
+  const res = await fetch(`${API_BASE}/maintenance?${params}`, getOptions('GET'));
+  const data = await parseJsonResponse(res);
+  if (!data.success) throw new Error(data.message || 'Failed to load maintenance requests');
+  return data.data;
+}
+
+export async function createMaintenanceRequest(body) {
+  const res = await fetch(`${API_BASE}/maintenance`, getOptions('POST', body));
+  const data = await parseJsonResponse(res);
+  if (!data.success) throw new Error(data.message || 'Create failed');
+  return data.data;
+}
+
+export async function updateMaintenanceStatus(id, status) {
+  const res = await fetch(`${API_BASE}/maintenance?id=${id}&status=${encodeURIComponent(status)}`, getOptions('PUT'));
+  const data = await parseJsonResponse(res);
+  if (!data.success) throw new Error(data.message || 'Update failed');
+  return data;
+}
+
+// ==================== FEEDBACK ====================
+export async function getFeedback(opts = {}) {
+  const params = new URLSearchParams(opts);
+  const res = await fetch(`${API_BASE}/feedback?${params}`, getOptions('GET'));
+  const data = await parseJsonResponse(res);
+  if (!data.success) throw new Error(data.message || 'Failed to load feedback');
+  return data.data;
+}
+
+export async function createFeedback(body) {
+  const res = await fetch(`${API_BASE}/feedback`, getOptions('POST', body));
+  const data = await parseJsonResponse(res);
+  if (!data.success) throw new Error(data.message || 'Submit failed');
+  return data.data;
+}
+
+// ==================== SERVICE REQUESTS ====================
+export async function getServiceRequests(opts = {}) {
+  const params = new URLSearchParams(opts);
+  const res = await fetch(`${API_BASE}/service-requests?${params}`, getOptions('GET'));
+  const data = await parseJsonResponse(res);
+  if (!data.success) throw new Error(data.message || 'Failed to load service requests');
+  return data.data;
+}
+
+export async function createServiceRequest(body) {
+  const res = await fetch(`${API_BASE}/service-requests`, getOptions('POST', body));
+  const data = await parseJsonResponse(res);
+  if (!data.success) throw new Error(data.message || 'Create failed');
+  return data.data;
+}
+
+export async function updateServiceRequestStatus(id, status) {
+  const res = await fetch(`${API_BASE}/service-requests?id=${id}&status=${encodeURIComponent(status)}`, getOptions('PUT'));
+  const data = await parseJsonResponse(res);
+  if (!data.success) throw new Error(data.message || 'Update failed');
+  return data;
+}
+
+// ==================== NOTIFICATIONS ====================
+export async function getNotifications() {
+  const res = await fetch(`${API_BASE}/notifications`, getOptions('GET'));
+  const data = await parseJsonResponse(res);
+  if (!data.success) throw new Error(data.message || 'Failed to load notifications');
+  return data.data;
+}
+
+export async function markNotificationRead(id) {
+  const res = await fetch(`${API_BASE}/notifications?id=${id}&action=read`, getOptions('PUT'));
+  const data = await parseJsonResponse(res);
+  if (!data.success) throw new Error(data.message || 'Failed');
+  return data;
+}
+
+export async function getUnreadCount() {
+  const res = await fetch(`${API_BASE}/notifications?unreadCount=true`, getOptions('GET'));
+  const data = await parseJsonResponse(res);
+  if (!data.success) throw new Error(data.message || 'Failed');
+  return data.data.count;
 }

@@ -4,9 +4,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Decorator: Add extra charges to base invoice.
- */
+
+ //Decorator: Add extra charges to base invoice.
+
 public class ExtraChargesDecorator implements InvoiceCharge {
     private final InvoiceCharge base;
     private final List<InvoiceCharge> extras = new ArrayList<>();
