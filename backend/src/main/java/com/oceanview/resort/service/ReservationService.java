@@ -28,10 +28,12 @@ public class ReservationService {
 
     public Optional<ReservationDTO> findById(Integer id) {
         Optional<Reservation> r = reservationRepository.findById(id);
-        if (r.isEmpty()) return Optional.empty();
+        if (r.isEmpty())
+            return Optional.empty();
         Reservation res = r.get();
         guestRepository.findById(res.getGuestId()).ifPresent(res::setGuest);
-        if (res.getRoomId() != null) roomRepository.findById(res.getRoomId()).ifPresent(res::setRoom);
+        if (res.getRoomId() != null)
+            roomRepository.findById(res.getRoomId()).ifPresent(res::setRoom);
         return Optional.of(ReservationMapper.toDTO(res));
     }
 
@@ -63,15 +65,19 @@ public class ReservationService {
 
     public Optional<Reservation> create(Reservation reservation, Integer createdBy, HttpServletRequest request) {
         ReservationValidationHandler.ValidationResult vr = validate(reservation);
-        if (!vr.isValid()) return Optional.empty();
+        if (!vr.isValid())
+            return Optional.empty();
         if (reservation.getRoomId() != null) {
-            List<Reservation> overlapping = reservationRepository.findByRoomIdAndOverlappingDates(reservation.getRoomId(), reservation.getCheckInDate(), reservation.getCheckOutDate());
-            if (!overlapping.isEmpty()) return Optional.empty();
+            List<Reservation> overlapping = reservationRepository.findByRoomIdAndOverlappingDates(
+                    reservation.getRoomId(), reservation.getCheckInDate(), reservation.getCheckOutDate());
+            if (!overlapping.isEmpty())
+                return Optional.empty();
         }
         reservation.setStatus("PENDING_APPROVAL");
         reservation.setCreatedBy(createdBy);
         if (reservationRepository.save(reservation)) {
-            activityLogService.log(createdBy, "RESERVATION_CREATE", "RESERVATION", String.valueOf(reservation.getId()), request.getRemoteAddr());
+            activityLogService.log(createdBy, "RESERVATION_CREATE", "RESERVATION", String.valueOf(reservation.getId()),
+                    request.getRemoteAddr());
             return Optional.of(reservation);
         }
         return Optional.empty();
@@ -79,7 +85,8 @@ public class ReservationService {
 
     public boolean approve(Integer reservationId, Integer approvedBy) {
         Reservation r = reservationRepository.findById(reservationId).orElse(null);
-        if (r == null || !"PENDING_APPROVAL".equals(r.getStatus())) return false;
+        if (r == null || !"PENDING_APPROVAL".equals(r.getStatus()))
+            return false;
         r.setStatus("CONFIRMED");
         r.setApprovedBy(approvedBy);
         r.setApprovedAt(Instant.now());
@@ -87,13 +94,40 @@ public class ReservationService {
     }
 
     public boolean cancel(Integer reservationId, String reason) {
-        com.oceanview.resort.patterns.reservation.CancelReservationCommand cmd = new com.oceanview.resort.patterns.reservation.CancelReservationCommand(reservationRepository, reservationId, reason);
+        com.oceanview.resort.patterns.reservation.CancelReservationCommand cmd = new com.oceanview.resort.patterns.reservation.CancelReservationCommand(
+                reservationRepository, reservationId, reason);
         return cmd.execute();
+    }
+
+    public boolean update(Integer id, Reservation updated) {
+        Reservation existing = reservationRepository.findById(id).orElse(null);
+        if (existing == null)
+            return false;
+        if (updated.getRoomId() != null)
+            existing.setRoomId(updated.getRoomId());
+        if (updated.getCheckInDate() != null)
+            existing.setCheckInDate(updated.getCheckInDate());
+        if (updated.getCheckOutDate() != null)
+            existing.setCheckOutDate(updated.getCheckOutDate());
+        if (updated.getAdults() != null)
+            existing.setAdults(updated.getAdults());
+        if (updated.getChildren() != null)
+            existing.setChildren(updated.getChildren());
+        if (updated.getSpecialRequests() != null)
+            existing.setSpecialRequests(updated.getSpecialRequests());
+        if (updated.getStatus() != null)
+            existing.setStatus(updated.getStatus());
+        return reservationRepository.update(existing);
+    }
+
+    public boolean delete(Integer id) {
+        return reservationRepository.delete(id);
     }
 
     private Reservation enrich(Reservation r) {
         guestRepository.findById(r.getGuestId()).ifPresent(r::setGuest);
-        if (r.getRoomId() != null) roomRepository.findById(r.getRoomId()).ifPresent(r::setRoom);
+        if (r.getRoomId() != null)
+            roomRepository.findById(r.getRoomId()).ifPresent(r::setRoom);
         return r;
     }
 }

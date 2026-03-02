@@ -31,6 +31,7 @@ public class RegisterServlet extends HttpServlet {
         user.setEmail(body.getEmail());
         user.setFirstName(body.getFirstName() != null ? body.getFirstName() : "");
         user.setLastName(body.getLastName() != null ? body.getLastName() : "");
+        user.setPhone(body.getPhone());
         user.setPasswordHash("");
         roleRepo.findByCode("CUSTOMER").ifPresent(r -> user.setRoleId(r.getId()));
         user.setBranchId(1);

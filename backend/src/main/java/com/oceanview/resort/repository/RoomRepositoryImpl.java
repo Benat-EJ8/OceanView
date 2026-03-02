@@ -19,7 +19,8 @@ public class RoomRepositoryImpl implements RoomRepository {
         try (Connection conn = ds.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) return Optional.of(mapRow(rs));
+                if (rs.next())
+                    return Optional.of(mapRow(rs));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -34,7 +35,8 @@ public class RoomRepositoryImpl implements RoomRepository {
         try (Connection conn = ds.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, branchId);
             try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) list.add(mapRow(rs));
+                while (rs.next())
+                    list.add(mapRow(rs));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -49,7 +51,8 @@ public class RoomRepositoryImpl implements RoomRepository {
         try (Connection conn = ds.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, categoryId);
             try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) list.add(mapRow(rs));
+                while (rs.next())
+                    list.add(mapRow(rs));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -66,7 +69,8 @@ public class RoomRepositoryImpl implements RoomRepository {
             ps.setDate(2, Date.valueOf(checkOut));
             ps.setDate(3, Date.valueOf(checkIn));
             try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) list.add(mapRow(rs));
+                while (rs.next())
+                    list.add(mapRow(rs));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -77,7 +81,8 @@ public class RoomRepositoryImpl implements RoomRepository {
     @Override
     public boolean save(Room room) {
         String sql = "INSERT INTO rooms (branch_id, category_id, room_number, floor, status, view_type) VALUES (?,?,?,?,?,?)";
-        try (Connection conn = ds.getConnection(); PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection conn = ds.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, room.getBranchId());
             ps.setInt(2, room.getCategoryId());
             ps.setString(3, room.getRoomNumber());
@@ -105,6 +110,17 @@ public class RoomRepositoryImpl implements RoomRepository {
             ps.setString(4, room.getStatus());
             ps.setString(5, room.getViewType());
             ps.setInt(6, room.getId());
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public boolean delete(Integer id) {
+        String sql = "DELETE FROM rooms WHERE id = ?";
+        try (Connection conn = ds.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new RuntimeException(e);

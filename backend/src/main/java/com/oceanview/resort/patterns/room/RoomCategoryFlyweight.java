@@ -5,9 +5,9 @@ import com.oceanview.resort.domain.RoomCategory;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * Flyweight: Shared room category data to avoid repeated DB reads.
- */
+
+  // Flyweight: Shared room category data to avoid repeated DB reads.
+
 public class RoomCategoryFlyweight {
     private static final Map<Integer, RoomCategory> CACHE = new ConcurrentHashMap<>();
 

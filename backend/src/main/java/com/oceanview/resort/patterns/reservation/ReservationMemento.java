@@ -5,9 +5,9 @@ import com.oceanview.resort.domain.Reservation;
 import java.time.LocalDate;
 import java.math.BigDecimal;
 
-/**
- * Memento: Snapshot of reservation state for history/undo.
- */
+
+ // Memento: Snapshot of reservation state for history/undo.
+
 public class ReservationMemento {
     private final Integer id;
     private final String status;

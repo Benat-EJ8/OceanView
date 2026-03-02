@@ -1,16 +1,47 @@
-/* Minimal reset – MUI CssBaseline handles the rest */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
+*, *::before, *::after { box-sizing: border-box; }
+html, body, #root { margin: 0; padding: 0; min-height: 100vh; }
 body {
-  margin: 0;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(180deg, #0a1628 0%, #0d1f3c 50%, #0a1628 100%);
+  color: #e0e6f0;
 }
 
-#root {
-  min-height: 100vh;
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+::-webkit-scrollbar-thumb { background: rgba(0,188,212,0.3); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,188,212,0.5); }
+
+/* Glow animation */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(0,188,212,0.1); }
+  50% { box-shadow: 0 0 40px rgba(0,188,212,0.25); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.stat-card { animation: pulse-glow 4s ease-in-out infinite; }
+.float-animation { animation: float 6s ease-in-out infinite; }
+
+/* Dashboard stat cards */
+.dashboard-grid { display: grid; gap: 20px; }
+
+/* Chart container overrides */
+.chart-container {
+  position: relative;
+  padding: 20px;
+  border-radius: 16px;
+  background: rgba(17,34,64,0.6);
+  border: 1px solid rgba(0,188,212,0.1);
 }
