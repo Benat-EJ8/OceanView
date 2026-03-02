@@ -25,13 +25,20 @@ public class ReportsServlet extends HttpServlet {
         LocalDate fromDate = from != null ? LocalDate.parse(from) : LocalDate.now().minusMonths(1);
         LocalDate toDate = to != null ? LocalDate.parse(to) : LocalDate.now();
         Map<String, Object> data;
-        if ("occupancy".equals(type)) data = reportService.getOccupancyReport(branchId, fromDate, toDate);
-        else if ("revenue".equals(type)) data = reportService.getRevenueReport(branchId, fromDate, toDate);
-        else if ("bookings".equals(type)) data = reportService.getBookingStats(branchId, fromDate, toDate);
-        else if ("staff".equals(type)) data = reportService.getStaffPerformance(branchId, fromDate, toDate);
+        if ("occupancy".equals(type))
+            data = reportService.getOccupancyReport(branchId, fromDate, toDate);
+        else if ("revenue".equals(type))
+            data = reportService.getRevenueReport(branchId, fromDate, toDate);
+        else if ("bookings".equals(type))
+            data = reportService.getBookingStats(branchId, fromDate, toDate);
+        else if ("staff".equals(type))
+            data = reportService.getStaffPerformance(branchId, fromDate, toDate);
+        else if ("services".equals(type))
+            data = reportService.getServiceStats(branchId, fromDate, toDate);
         else {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            resp.getWriter().write(JsonHelper.toJson(ApiResponse.fail("type=occupancy|revenue|bookings|staff")));
+            resp.getWriter()
+                    .write(JsonHelper.toJson(ApiResponse.fail("type=occupancy|revenue|bookings|staff|services")));
             return;
         }
         resp.getWriter().write(JsonHelper.toJson(ApiResponse.ok(data)));
